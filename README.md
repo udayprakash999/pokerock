@@ -1,0 +1,3 @@
+init PokeRock
+Status 
+    - initialisation
