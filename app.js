@@ -2,6 +2,7 @@
 const header = document.querySelector("header");
 const nav = document.querySelector(".main-nav");
 const pokemonWrapper = document.getElementById("pokemonWrapper");
+const index = document.getElementById('idx')
 
 const prevBtn = document.getElementById("prev");
 const nextBtn = document.getElementById("next");
@@ -38,6 +39,7 @@ async function fetchPokemonPage(page = 1) {
     }
     const data = await response.json();
     totalPokemon = data.count;
+    index.textContent = totalPokemon
     curr = page;
     const pokemonData = await Promise.all(
       data.results.map(async (pokemon) => {
@@ -75,14 +77,29 @@ nextBtn.addEventListener("click", () => {
     fetchPokemonPage(curr + 1);
   }
 });
+function numZero(num) {
+  if (num < 10) {
+    num = `00${num}`;
+    return num;
+  } else if (num < 100) {
+    num = `0${num}`;
+    return num;
+  }
+  return num;
+}
 function generateCard(poke) {
   const artwork = `${poke?.sprites?.other?.["official-artwork"]?.front_default}`;
   let pokemonCard = document.createElement("div");
   pokemonCard.classList.add("pokemon-card");
-  pokemonCard.dataset.id = `${poke.id}`;
+
+  let pokeId = numZero(poke.id);
+  pokemonCard.dataset.id = `${pokeId}`;
+
+  let pokeTypes = poke?.types;
+
   pokemonCard.innerHTML = `
     <div class="card-header">
-        <div class="card-id">No. ${poke.id}</div>
+        <div class="card-id">No//${pokeId}</div>
     </div>
     <div class="pokemon-image">
     <img src=${artwork}>
@@ -91,11 +108,17 @@ function generateCard(poke) {
         <div class="pokemon-name">${poke.name}</div>
         <div class="tags">
             <div class="tag">
-                ${poke?.types?.[0]?.type.name}
+            ${poke?.types?.[0]?.type.name}
             </div>
-            <div class="tag">
-                ${poke?.types?.[1]?.type.name}
-            </div>
+            ${
+              pokeTypes.length > 1
+                ? `
+              <div class="tag">
+              ${poke?.types?.[1]?.type.name}
+              </div>
+              `
+                : ""
+            }
         </div>
     </div>
   `;
@@ -103,6 +126,4 @@ function generateCard(poke) {
 }
 fetchPokemonPage();
 
-function setCount(count){
-  
-}
+function setCount(count) {}
