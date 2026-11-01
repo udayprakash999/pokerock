@@ -2,11 +2,67 @@
 const header = document.querySelector("header");
 const nav = document.querySelector(".main-nav");
 const pokemonWrapper = document.getElementById("pokemonWrapper");
-const index = document.getElementById('idx')
+const index = document.getElementById("idx");
 
 const prevBtn = document.getElementById("prev");
 const nextBtn = document.getElementById("next");
 const pageNum = document.getElementById("pageNum");
+
+const searchForm = document.querySelector(".search-bar");
+const searchInput = document.querySelector(".search-bar input");
+
+async function searchPokemon(query) {
+  const searchT = query.trim().toLowerCase();
+
+  if (!searchT) {
+    fetchPokemonPage(1);
+    return;
+  }
+
+  try {
+    pokemonWrapper.innerHTML = "Searching Pokemon...";
+
+    const response = await fetch(
+      `${baseAPI}pokemon/${encodeURIComponent(searchT)}`,
+    );
+
+    if (!response.ok) {
+      throw new Error("Pokemon not found");
+    }
+
+    const pokemon = await response.json();
+    pokemonWrapper.innerHTML = "";
+
+    generateCard(pokemon);
+
+    pageNum.textContent = "Search Result";
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+
+    index.textContent = "1";
+  } catch (error) {
+    pokemonWrapper.innerHTML = `<p class = "noRes"> No pokemon founc.</p>`;
+
+    pageNum.textContent = "No results";
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    index.textContent = "0";
+  }
+}
+
+searchForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const query = searchInput.value;
+
+  searchPokemon(query);
+});
+
+searchInput.addEventListener("input", () => {
+  if (searchInput.value.trim() === "") {
+    fetchPokemonPage(1);
+  }
+});
 
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -39,7 +95,7 @@ async function fetchPokemonPage(page = 1) {
     }
     const data = await response.json();
     totalPokemon = data.count;
-    index.textContent = totalPokemon
+    index.textContent = totalPokemon;
     curr = page;
     const pokemonData = await Promise.all(
       data.results.map(async (pokemon) => {

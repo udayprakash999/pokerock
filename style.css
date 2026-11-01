@@ -269,3 +269,10 @@ main {
 .pagination button:hover:disabled {
   background: gray;
 }
+.noRes{
+  grid-column: 1/ -1;
+  text-align: center;
+  font-size: 1.3rem;
+  padding: 3rem;
+  font-family: var(--display);
+}
