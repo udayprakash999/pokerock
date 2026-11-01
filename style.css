@@ -131,6 +131,7 @@ nav .logo {
   background: var(--surface);
   border-radius: 1rem;
   border: 1px solid var(--muted);
+  margin-top: 1rem;
 }
 .search-bar input,
 .search-bar button {
@@ -269,7 +270,7 @@ main {
 .pagination button:hover:disabled {
   background: gray;
 }
-.noRes{
+.noRes {
   grid-column: 1/ -1;
   text-align: center;
   font-size: 1.3rem;
